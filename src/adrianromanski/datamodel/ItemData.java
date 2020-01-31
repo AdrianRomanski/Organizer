@@ -71,6 +71,10 @@ public class ItemData {
         }
     }
 
+    public void deleteItem(Item item) {
+        items.remove(item);
+    }
+
 
 
 }
