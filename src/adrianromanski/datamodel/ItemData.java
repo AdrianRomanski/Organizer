@@ -13,6 +13,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 
+/**
+ *
+ */
 public class ItemData {
     private static ItemData instance = new ItemData();
     private static String fileName = "ListItems.txt";
@@ -37,6 +40,12 @@ public class ItemData {
         items.add(item);
     }
 
+
+    /**
+     * Loading items from file
+     * Using FXCollections.observableArrayList for better
+     * observation for changes (new items added / removed / changed).
+     */
     public void loadItems() throws IOException {
         items = FXCollections.observableArrayList();
         Path path = Paths.get(fileName);
@@ -58,6 +67,10 @@ public class ItemData {
 
     }
 
+
+    /**
+     * Storing items to file
+     */
     public void storeItems() throws IOException {
         Path path = Paths.get(fileName);
         try (BufferedWriter bw = Files.newBufferedWriter(path)) {
@@ -71,6 +84,9 @@ public class ItemData {
         }
     }
 
+    /**
+     * Simple delete method
+     */
     public void deleteItem(Item item) {
         items.remove(item);
     }

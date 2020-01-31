@@ -9,6 +9,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
@@ -19,6 +21,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ *
+ */
 public class Controller {
 
     private List<Item> items;
@@ -34,8 +39,11 @@ public class Controller {
     @FXML
     private ContextMenu listContextMenu;
 
-    public void initialize() {
 
+    /**
+     * Initialize ContextMenu, todoListView, itemDetailsTextArea
+     */
+    public void initialize() {
         listContextMenu = new ContextMenu();
         MenuItem deleteMenuItem = new MenuItem("Delete");
         deleteMenuItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -45,7 +53,6 @@ public class Controller {
                 deleteItem(item);
             }
         });
-
         listContextMenu.getItems().add(deleteMenuItem);
         todoListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Item>() {
             @Override
@@ -58,13 +65,17 @@ public class Controller {
             }
         }
     });
+
         todoListView.setItems(ItemData.getInstance().getItems());
         todoListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        // While user enter the application selecting first item in the list
         todoListView.getSelectionModel().selectFirst();
 
-        // Set Color to red if the user passed deadline
-        // Set Color for blue if deadline is the next day
         todoListView.setCellFactory(new Callback<ListView<Item>, ListCell<Item>>() {
+            /**
+             * Set Color to red if the user passed deadline
+             * Set Color for blue if deadline is the next day
+             */
             @Override
             public ListCell<Item> call(ListView<Item> itemListView) {
                 ListCell<Item> cell = new ListCell<>() {
@@ -97,6 +108,13 @@ public class Controller {
         });
     }
 
+
+    /**
+     * Showing dialog for creating new item
+     * Allow user to create a new item and save it to file
+     * @see DialogController
+     * User may quit without saving item using cancel button
+     */
     @FXML
     public void showNewItemDialog() {
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -122,6 +140,20 @@ public class Controller {
         }
     }
 
+
+    /**
+     * Allow user to delete item by using del button in keyboard
+     */
+    @FXML public void handleKeyPressed(KeyEvent keyEvent) {
+        Item selectedItem = todoListView.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            if (keyEvent.getCode().equals(KeyCode.DELETE)) {
+                deleteItem(selectedItem);
+            }
+        }
+    }
+
+
     @FXML
     public void handleClickListView() {
         Item item = todoListView.getSelectionModel().getSelectedItem();
@@ -129,6 +161,11 @@ public class Controller {
         deadLineLabel.setText(item.getDeadline().toString());
     }
 
+
+    /**
+     * Allow user to delete item by taking action from context menu
+     * It's asking before deleting for more safety
+     */
     @FXML
     public void deleteItem(Item item) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

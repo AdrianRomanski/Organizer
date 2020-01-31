@@ -39,8 +39,4 @@ public class Item {
         this.deadline = deadline;
     }
 }
-//    @Override
-//    public String toString() {
-//        return shortDescription;
-//    }
-//}
+
