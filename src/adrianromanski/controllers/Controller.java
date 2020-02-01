@@ -2,8 +2,11 @@ package adrianromanski.controllers;
 
 import adrianromanski.datamodel.Item;
 import adrianromanski.datamodel.ItemData;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -18,8 +21,10 @@ import javafx.util.Callback;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  *
@@ -38,11 +43,15 @@ public class Controller {
     private BorderPane mainBorderPane;
     @FXML
     private ContextMenu listContextMenu;
+    @FXML
+    private ToggleButton filterToggleButton;
+
+    private FilteredList<Item> filteredList;
+
+    private Predicate<Item> wantAllItems;
+    private Predicate<Item> wantTodayItems;
 
 
-    /**
-     * Initialize ContextMenu, todoListView, itemDetailsTextArea
-     */
     public void initialize() {
         listContextMenu = new ContextMenu();
         MenuItem deleteMenuItem = new MenuItem("Delete");
@@ -66,9 +75,41 @@ public class Controller {
         }
     });
 
-        todoListView.setItems(ItemData.getInstance().getItems());
+
+        wantAllItems = new Predicate<Item>() {
+            /**
+             * Returning always true to show all items
+             */
+            @Override
+            public boolean test(Item item) {
+                return true;
+            }
+        };
+
+        wantTodayItems = new Predicate<Item>() {
+            /**
+             * Return true if LocalDate is now otherwise returns false
+             */
+            @Override
+            public boolean test(Item item) {
+                return (item.getDeadline().equals(LocalDate.now()));
+            }
+        };
+        filteredList = new FilteredList<Item>(ItemData.getInstance().getItems(), wantAllItems);
+
+        SortedList<Item> sortedList = new SortedList<Item>(filteredList,
+                new Comparator<Item>() {
+                    /**
+                     * Comparing items by their deadline
+                     */
+                    @Override
+                    public int compare(Item item, Item t1) {
+                        return item.getDeadline().compareTo(t1.getDeadline());
+                    }
+                });
+
+        todoListView.setItems(sortedList);
         todoListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        // While user enter the application selecting first item in the list
         todoListView.getSelectionModel().selectFirst();
 
         todoListView.setCellFactory(new Callback<ListView<Item>, ListCell<Item>>() {
@@ -177,5 +218,33 @@ public class Controller {
         if(result.isPresent() && result.get().equals(ButtonType.OK)) {
             ItemData.getInstance().deleteItem(item);
         }
+    }
+
+    /**
+     * If the button is clicked is showing todayItems otherwise allItems
+     * If the today list is empty it's showing clear details area / deadline
+     */
+    @FXML
+    public void handleFilterButton() {
+        Item selectedItem = todoListView.getSelectionModel().getSelectedItem();
+        if(filterToggleButton.isSelected()) {
+            filteredList.setPredicate(wantTodayItems);
+            if(filteredList.isEmpty()) {
+                itemDetailsTextArea.clear();
+                deadLineLabel.setText("");
+            } else if(filteredList.contains(selectedItem)) {
+                todoListView.getSelectionModel().select(selectedItem);
+            } else {
+                todoListView.getSelectionModel().selectFirst();
+            }
+        } else {
+           filteredList.setPredicate(wantAllItems);
+           todoListView.getSelectionModel().select(selectedItem);
+        }
+    }
+
+    @FXML
+    public void handleExit() {
+        Platform.exit();
     }
 }
