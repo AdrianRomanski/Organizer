@@ -233,6 +233,10 @@ public class Controller {
         }
     }
 
+    /**
+     * Allow user to complete item by taking action from context menu
+     * It's asking before
+     */
     @FXML
     public void completeItem(Item item) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
