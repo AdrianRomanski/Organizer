@@ -1,11 +1,11 @@
-Mail birthday card	Buy a 30th birthday card for John	25-12-2020
-Finish design proposal for client	I promised Mike i'd email website	12-04-2020
-Pickup Doug at the train station	Doug's arriving at 4 o clock	10-01-2020
-Pick up dry cleaning	The clothes should be ready by Wednesday	18-02-2020
-Go to Work	Today Sic!!!!~!	25-01-2020
-I need coffe	Make a coffe	25-01-2020
-Testing DataBinding	MyFirst DataBinding	25-01-2020
-test	testtest	30-01-2020
-This Item is due Tommorow	Dentist appointment	31-01-2020
-Due Last Week	Cinema	23-01-2020
-Today Event	Code!!!	01-02-2020
+Mail birthday card	Buy a 30th birthday card for John	25-12-2020	true
+Finish design proposal for client	I promised Mike i'd email website	12-04-2020	false
+Pickup Doug at the train station	Doug's arriving at 4 o clock	10-01-2020	true
+Pick up dry cleaning	The clothes should be ready by Wednesday	18-02-2020	true
+Go to Work	Today Sic!!!!~!	25-01-2020	true
+I need coffe	Make a coffe	25-01-2020	true
+Testing DataBinding	MyFirst DataBinding	25-01-2020	false
+test	testtest	30-01-2020	false
+This Item is due Tommorow	Dentist appointment	31-01-2020	false
+Due Last Week	Cinema	23-01-2020	false
+Today Event	Code!!!	01-02-2020	true

@@ -58,9 +58,10 @@ public class ItemData {
                 String shortDescription = itemPieces[0];
                 String details = itemPieces[1];
                 String dateString = itemPieces[2];
+                String isComplete = itemPieces[3];
 
                 LocalDate date = LocalDate.parse(dateString, formatter);
-                Item item = new Item(shortDescription, details, date);
+                Item item = new Item(shortDescription, details, date, isComplete);
                 items.add(item);
             }
         }
@@ -75,10 +76,11 @@ public class ItemData {
         Path path = Paths.get(fileName);
         try (BufferedWriter bw = Files.newBufferedWriter(path)) {
             for (Item item : items) {
-                bw.write(String.format("%s\t%s\t%s",
+                bw.write(String.format("%s\t%s\t%s\t%s",
                         item.getShortDescription(),
                         item.getDetails(),
-                        item.getDeadline().format(formatter)));
+                        item.getDeadline().format(formatter),
+                        item.getIsComplete()));
                 bw.newLine();
             }
         }

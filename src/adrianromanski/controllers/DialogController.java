@@ -18,12 +18,17 @@ public class DialogController {
     @FXML
     private DatePicker deadlinePicker;
 
+
+    /**
+     * Is completed is always false when creating new item
+     */
     public Item processResults() {
         String shortDescription = shortDescriptionField.getText().trim();
         String details = detailsArea.getText().trim();
         LocalDate deadlineValue = deadlinePicker.getValue();
+        String isCompleted = "false";
 
-        Item newItem = new Item(shortDescription, details, deadlineValue);
+        Item newItem = new Item(shortDescription, details, deadlineValue, isCompleted);
         ItemData.getInstance().addItem(newItem);
         return newItem;
     }

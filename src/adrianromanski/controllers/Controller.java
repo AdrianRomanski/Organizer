@@ -26,9 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-/**
- *
- */
+
 public class Controller {
 
     private List<Item> items;
@@ -52,7 +50,9 @@ public class Controller {
     private Predicate<Item> wantTodayItems;
 
 
+
     public void initialize() {
+
         listContextMenu = new ContextMenu();
         MenuItem deleteMenuItem = new MenuItem("Delete");
         deleteMenuItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -62,7 +62,17 @@ public class Controller {
                 deleteItem(item);
             }
         });
+        MenuItem completeMenuItem = new MenuItem("Complete");
+        completeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Item item = todoListView.getSelectionModel().getSelectedItem();
+                completeItem(item);
+            }
+        });
+
         listContextMenu.getItems().add(deleteMenuItem);
+        listContextMenu.getItems().add(completeMenuItem);
         todoListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Item>() {
             @Override
             public void changed(ObservableValue<? extends Item> observableValue, Item oldValue, Item newValue) {
@@ -114,8 +124,9 @@ public class Controller {
 
         todoListView.setCellFactory(new Callback<ListView<Item>, ListCell<Item>>() {
             /**
-             * Set Color to red if the user passed deadline
-             * Set Color for blue if deadline is the next day
+             * Set Color to red if the user passed deadline and item is not completed
+             * Set Color for blue if deadline is the next day and item is not completed
+             * Set Color for green if item is completed
              */
             @Override
             public ListCell<Item> call(ListView<Item> itemListView) {
@@ -127,9 +138,11 @@ public class Controller {
                             setText(null);
                         } else {
                             setText(item.getShortDescription());
-                            if(item.getDeadline().isBefore(LocalDate.now())) {
+                            if(item.getDeadline().isBefore(LocalDate.now()) && item.getIsComplete().equals("false")) {
                                 setTextFill(Color.RED);
-                            } else if(item.getDeadline().equals(LocalDate.now().plusDays(1))) {
+                            } else if(item.getIsComplete().equals("true")) {
+                                setTextFill(Color.GREEN);
+                            } else if(item.getDeadline().equals(LocalDate.now().plusDays(1)) && item.getIsComplete().equals("false")) {
                                 setTextFill(Color.BLUE);
                             }
                         }
@@ -218,6 +231,16 @@ public class Controller {
         if(result.isPresent() && result.get().equals(ButtonType.OK)) {
             ItemData.getInstance().deleteItem(item);
         }
+    }
+
+    @FXML
+    public void completeItem(Item item) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Complete Item");
+        alert.setHeaderText("Complete item: " + item.getShortDescription());
+        alert.setContentText("Are you sure? Press OK to confirm, or cancel to Back out");
+        Optional<ButtonType> result = alert.showAndWait();
+        item.setIsComplete("true");
     }
 
     /**
